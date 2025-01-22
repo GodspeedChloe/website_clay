@@ -3,3 +3,5 @@ clay-0.12
 .vscode
 
 build
+
+resources/*
