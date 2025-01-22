@@ -2,6 +2,9 @@
 #include "./clay-0.12/clay.h"
 #include "./clay-0.12/renderers/raylib/clay_renderer_raylib.c"
 
+const int FONT_ID_CREATO = 0;
+
+
 int main(void){
     Clay_Raylib_Initialize(FLAG_WINDOW_RESIZABLE);
 
@@ -26,6 +29,16 @@ int main(void){
     Clay_Color brightAqua = {65, 234, 212, 255};
     Clay_Color electricBlue = {0, 46, 255, 255};
     Clay_Color white = {255, 255, 255, 255};
+    Clay_Color black = {0, 0, 0, 0};
+    Clay_Color orange = {255, 138, 0, 255};
+    Clay_Color darkTeal = {24, 90, 86, 255};
+
+
+    Clay_SetMeasureTextFunction(Raylib_MeasureText);
+    Raylib_fonts[FONT_ID_CREATO] = (Raylib_Font) {
+        .font = LoadFontEx("resources/CreatoDisplay-Bold.otf", 48, 0, 0),
+        .fontId = FONT_ID_CREATO
+    };
 
     while (!WindowShouldClose()){
         // Run Once per Frame
@@ -39,17 +52,17 @@ int main(void){
         // Build UI here
         CLAY(
             CLAY_ID("OuterContainer"),
-            CLAY_RECTANGLE({ .color = almostBlack}),
+            CLAY_RECTANGLE({ .color = black}),
             CLAY_LAYOUT({
                 .layoutDirection = CLAY_TOP_TO_BOTTOM,
                 .sizing = layoutExpand,
                 .padding = {16, 16}
             })
-        ) {
+        ){
             CLAY(
                 CLAY_ID("HeaderBar"),
                 CLAY_RECTANGLE({ 
-                    .color = brightYellow,
+                    .color = black,
                     .cornerRadius = 8
                 }),
                 CLAY_LAYOUT({
@@ -58,50 +71,23 @@ int main(void){
                         .width = CLAY_SIZING_GROW()
                     }
                 })
-            ){}
+            ){
+                CLAY_TEXT(
+                    CLAY_STRING("Chloe\'s Blog"),
+                    CLAY_TEXT_CONFIG({
+                        .fontId = FONT_ID_CREATO,
+                        .fontSize = 32,
+                        .textColor = orange
+                    })
+                );
+            }
             CLAY(
                 CLAY_ID("LowerContent"),
                 CLAY_LAYOUT({
                     .sizing = layoutExpand,
                     .padding = (16, 16)
                 })
-            ){
-                CLAY(
-                    CLAY_ID("Sidebar"),
-                    CLAY_LAYOUT({
-                        .sizing = {
-                            .width = CLAY_SIZING_FIXED(250),
-                            .height = CLAY_SIZING_GROW()
-                        }
-                    }),
-                    CLAY_RECTANGLE({
-                        .color = brightAqua,
-                        .cornerRadius = 8
-                    })
-                ){}
-                CLAY(
-                    CLAY_ID("MainContentContainer"),
-                    CLAY_LAYOUT({
-                        .sizing = layoutExpand,
-                        .padding = {8, 8}
-                    }),
-                    CLAY_RECTANGLE({
-                        .color = pinkRed,
-                        .cornerRadius = 8
-                    })
-                ){
-                    CLAY(
-                        CLAY_ID("MainContent"),
-                        CLAY_LAYOUT({
-                            .sizing = layoutExpand
-                        }),
-                        CLAY_RECTANGLE({
-                            .color = white,
-                            .cornerRadius = 8
-                        })
-                    ){}
-                }
-            }
+            ){}
         }
 
 
