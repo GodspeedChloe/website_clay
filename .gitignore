@@ -4,4 +4,7 @@ clay-0.12
 
 build
 
-resources/*
+
+fonts/*
+
+images/*
