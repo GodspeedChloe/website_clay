@@ -14,6 +14,8 @@ const uint32_t FONT_ID_BAYONE = 1;
 const uint32_t FONT_ID_SEGA = 2;
 const uint32_t FONT_ID_PDARK = 3;
 const uint32_t FONT_ID_EHSMB = 4;
+const uint32_t FONT_ID_LCDMB = 5;
+const uint32_t FONT_ID_DEMODE = 6;
 
 
 Clay_Color almostBlack = {12, 15, 10, 255};
