@@ -54,8 +54,8 @@
           font-family: 'EHSMB';
           font-style: normal;
           font-weight: 400;
-          src: local('//udon/Projects/website_clay/build/site/fonts/EHSMB.ttf') format('truetype');
-        }home
+          src: local('/home/udon/Projects/website_clay/build/site/fonts/EHSMB.ttf') format('truetype');
+        }
 
         body > canvas {
             width: 100%;
@@ -102,6 +102,8 @@
     let memoryDataView;
     let textDecoder = new TextDecoder("utf-8");
     let previousFrameTime;
+    let firstFrameTime = 0;
+    let font_id = 3;
     let fontsById = [
         'Cube',
         'Bayone',
@@ -580,12 +582,21 @@
         }
     }
 
+    let renderLoopCount = 0;
     function renderLoop(currentTime) {
+        renderLoopCount = renderLoopCount + 1;
         const elapsed = currentTime - previousFrameTime;
         previousFrameTime = currentTime;
-        let font_id = Math.floor((currentTime % 5));
+        firstFrameTime = firstFrameTime + elapsed;
+        if (renderLoopCount > 30) {
+            font_id = font_id + 1;
+            renderLoopCount = 0;
+        }
+        if (font_id > fontsById.length -1) {
+            font_id = 0;
+        }
         console.log(font_id);
-        
+
         instance.exports.UpdateDrawFrame(scratchSpaceAddress, window.innerWidth, window.innerHeight, 0, 0, window.mousePositionXThisFrame, window.mousePositionYThisFrame, window.touchDown, window.mouseDown, 0, 0, window.dKeyPressedThisFrame, elapsed / 1000, font_id);
         renderLoopHTML();
              

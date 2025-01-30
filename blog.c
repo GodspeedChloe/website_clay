@@ -39,13 +39,6 @@ void SplashScreen(){
 }
 
 void renderBlogDesktop(uint32_t TITLE_FONT_ID){
-    Clay_Color c;
-    if ((TITLE_FONT_ID % 2) == 0){
-        c = orange;
-    }
-    else {
-        c = darkTeal;
-    }
     CLAY(
             CLAY_ID("OuterContainer"),
             CLAY_RECTANGLE({ .color = almostBlack }),
@@ -63,7 +56,7 @@ void renderBlogDesktop(uint32_t TITLE_FONT_ID){
                 }),
                 CLAY_LAYOUT({
                     .sizing = {
-                        .height = CLAY_SIZING_FIXED(60),
+                        .height = CLAY_SIZING_FIXED(90),
                         .width = CLAY_SIZING_GROW()
                     }
                 })
@@ -73,7 +66,7 @@ void renderBlogDesktop(uint32_t TITLE_FONT_ID){
                     CLAY_TEXT_CONFIG({
                         .fontId = TITLE_FONT_ID,
                         .fontSize = 46,
-                        .textColor = c
+                        .textColor = orange
                     })
                 );
             }
