@@ -6,9 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="preload" href="/home/udon/Projects/website_clay/build/site/fonts/Cube.ttf" as="font" type="font/ttf" crossorigin>
     <link rel="preload" href="/home/udon/Projects/website_clay/build/site/fonts/Bayone.ttf" as="font" type="font/ttf" crossorigin>
-    <link rel="preload" href="/home/udon/Projects/website_clay/build/site/fonts/SEGA.ttf" as="font" type="font/ttf" crossorigin>
-    <link rel="preload" href="/home/udon/Projects/website_clay/build/site/fonts/pdark.ttf" as="font" type="font/ttf" crossorigin>
-    <link rel="preload" href="/home/udon/Projects/website_clay/build/site/fonts/EHSMB.ttf" as="font" type="font/ttf" crossorigin>
+    <link rel="preload" href="/home/udon/Projects/website_clay/build/site/fonts/Demode.ttf" as="font" type="font/ttf" crossorigin>
+    <link rel="preload" href="/home/udon/Projects/website_clay/build/site/fonts/roboto-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
     <title>x3+ax+b mod p</title>
     <style>
         html, body {
@@ -36,39 +35,16 @@
         }
 
         @font-face {
-          font-family: 'SEGA LOGO FONT';
-          font-style: normal;
-          font-weight: 400;
-          src: local('SEGA LOGO FONT') format('truetype');
-        }
-
-        @font-face {
-          font-family: 'Perfect Dark (BRK)';
-          font-style: normal;
-          font-weight: 400;
-          src: local('Perfect Dark (BRK)') format('truetype');
-        }
-
-
-        @font-face {
-          font-family: 'EHSMB';
-          font-style: normal;
-          font-weight: 400;
-          src: local('Electronic Highway Sign') format('truetype');
-        }
-
-        @font-face {
-          font-family: 'LCDMB';
-          font-style: normal;
-          font-weight: 400;
-          src: local('LCDMB') format('truetype');
-        }
-
-        @font-face {
           font-family: 'Demode';
           font-style: normal;
           font-weight: 400;
           src: local('Demode') format('truetype');
+        }
+
+        @font-face {
+          font-family: 'Roboto';
+          font-style: normal;
+          src: local('Roboto');
         }
 
         body > canvas {
@@ -121,11 +97,8 @@
     let fontsById = [
         'Cube',
         'Bayone',
-        'SEGA',
-        'pdark',
-        'EHSMB',
-        'LCDMB',
         'Demode',
+        'Roboto',
     ];
     let elementCache = {};
     let imageCache = {};
@@ -604,14 +577,13 @@
         const elapsed = currentTime - previousFrameTime;
         previousFrameTime = currentTime;
         firstFrameTime = firstFrameTime + elapsed;
-        if (renderLoopCount > 30) {
+        if (renderLoopCount > 40) {
             font_id = font_id + 1;
             renderLoopCount = 0;
         }
         if (font_id > fontsById.length -1) {
             font_id = 0;
         }
-        console.log(font_id);
 
         instance.exports.UpdateDrawFrame(scratchSpaceAddress, window.innerWidth, window.innerHeight, 0, 0, window.mousePositionXThisFrame, window.mousePositionYThisFrame, window.touchDown, window.mouseDown, 0, 0, window.dKeyPressedThisFrame, elapsed / 1000, font_id);
         renderLoopHTML();

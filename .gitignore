@@ -8,3 +8,5 @@ build
 fonts/*
 
 images/*
+
+open_site.sh

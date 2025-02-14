@@ -1,4 +1,6 @@
-#define CLAY_EXTEND_CONFIG_RECTANGLE Clay_String link; bool cursorPointer;
+#define CLAY_EXTEND_CONFIG_RECTANGLE \
+    Clay_String link;                \
+    bool cursorPointer;
 #define CLAY_EXTEND_CONFIG_IMAGE Clay_String sourceURL;
 #define CLAY_EXTEND_CONFIG_TEXT bool disablePointerEvents;
 #define CLAY_IMPLEMENTATION
@@ -8,104 +10,128 @@
 double windowWidth = 1024, windowHeight = 768;
 float modelPageOneZRotation = 0;
 
-int font_count = 5;
+int font_count = 4;
 const uint32_t FONT_ID_CUBE = 0;
 const uint32_t FONT_ID_BAYONE = 1;
-const uint32_t FONT_ID_SEGA = 2;
-const uint32_t FONT_ID_PDARK = 3;
-const uint32_t FONT_ID_EHSMB = 4;
-const uint32_t FONT_ID_LCDMB = 5;
-const uint32_t FONT_ID_DEMODE = 6;
-
+const uint32_t FONT_ID_DEMODE = 2;
+const uint32_t FONT_ID_ROBOTO = 3;
 
 Clay_Color almostBlack = {12, 15, 10, 255};
-Clay_Color brightYellow = {251,255,18,255};
+Clay_Color brightYellow = {251, 255, 18, 255};
 Clay_Color pinkRed = {255, 32, 110, 255};
 Clay_Color brightAqua = {65, 234, 212, 255};
 Clay_Color electricBlue = {0, 46, 255, 255};
 Clay_Color white = {255, 255, 255, 255};
-Clay_Color black = {0, 0, 0, 0};
+Clay_Color black = {1, 0, 0, 0};
 Clay_Color orange = {255, 138, 0, 255};
 Clay_Color darkTeal = {24, 90, 86, 255};
 
 Clay_Sizing layoutExpand = {
     .width = CLAY_SIZING_GROW(),
-    .height = CLAY_SIZING_GROW()
-};
+    .height = CLAY_SIZING_GROW()};
 
-#define RAYLIB_VECTOR2_TO_CLAY_VECTOR2(vector) (Clay_Vector2) { .x = (vector).x, .y = (vector).y }
+uint32_t CURRCONTENTINDEX = 0;
 
+#define SECTIONCOUNT 3
 
-void SplashScreen(){
+char CONTENTINDEXES[SECTIONCOUNT][20] = {"Main", "Word Of The Day", "Test"};
 
+#define RAYLIB_VECTOR2_TO_CLAY_VECTOR2(vector) \
+    (Clay_Vector2) { .x = (vector).x, .y = (vector).y }
+
+void SplashScreen()
+{
 }
 
-void renderBlogDesktop(uint32_t TITLE_FONT_ID){
-    CLAY(
-            CLAY_ID("OuterContainer"),
-            CLAY_RECTANGLE({ .color = almostBlack }),
+void HandleContentSectionInteraction(Clay_ElementId elementId, Clay_PointerData pointerInfo, intptr_t userData)
+{
+    if (pointerInfo.state == CLAY_POINTER_DATA_PRESSED_THIS_FRAME)
+    {
+        CURRCONTENTINDEX = (uint32_t)userData;
+    }
+}
+
+void renderContentSelection()
+{
+    int i = 0;
+    while (i < SECTIONCOUNT)
+    {
+        CLAY(
+            CLAY_ID(CONTENTINDEXES[i]),
             CLAY_LAYOUT({
                 .layoutDirection = CLAY_TOP_TO_BOTTOM,
-                .sizing = layoutExpand,
-                .padding = {16, 16}
-            })
-        ){
-            CLAY(
-                CLAY_ID("HeaderBar"),
-                CLAY_RECTANGLE({ 
-                    .color = black,
-                    .cornerRadius = {8}
-                }),
-                CLAY_LAYOUT({
-                    .sizing = {
-                        .height = CLAY_SIZING_FIXED(90),
-                        .width = CLAY_SIZING_GROW()
-                    }
-                })
-            ){
-                CLAY_TEXT(
-                    CLAY_STRING("Chloe\'s Blog"),
-                    CLAY_TEXT_CONFIG({
-                        .fontId = TITLE_FONT_ID,
-                        .fontSize = 46,
-                        .textColor = orange
-                    })
-                );
-            }
-            CLAY(
-                CLAY_ID("LowerContent"),
-                CLAY_LAYOUT({
-                    .sizing = layoutExpand,
-                    .childGap = 10
-                })
-            ){
-                CLAY(
-                    CLAY_ID("Nav Left"),
-                    CLAY_LAYOUT({
-                        .sizing = {.width = CLAY_SIZING_PERCENT(0.1), .height = CLAY_SIZING_GROW()},
-                        .padding = {16, 16}
-                    }),
-                    CLAY_RECTANGLE({
-                                .color = orange,
-                                .cornerRadius = {.topLeft = 16, .topRight = 0, .bottomLeft = 16, .bottomRight = 0},
-                    })
-                ){}
-                CLAY(
-                    CLAY_ID("Blog Content"),
-                    CLAY_LAYOUT({
-                        .sizing = layoutExpand,
-                        .padding = {16, 16}
-                    }),
-                    CLAY_RECTANGLE({
-                                .color = darkTeal,
-                                .cornerRadius = {.topLeft = 0, .topRight = 16, .bottomLeft = 0, .bottomRight = 16},
-                    })
-                ){}
-            }
+                .sizing = {CLAY_SIZING_GROW(), CLAY_SIZING_FIXED(70)},
+                .childAlignment = {.x = CLAY_ALIGN_X_CENTER, .y = CLAY_ALIGN_Y_CENTER }
+            }),
+            CLAY_RECTANGLE({
+                .color = almostBlack,
+                .cornerRadius = {.topLeft = 16, .topRight = 0, .bottomLeft = 16, .bottomRight = 0},
+            }))
+        {
+            CLAY_TEXT(
+                CLAY_STRING(CONTENTINDEXES[i]),
+                CLAY_TEXT_CONFIG({.fontId = FONT_ID_ROBOTO,
+                                  .fontSize = 12,
+                                  .textColor = white}));
         }
+        i++;
+    }
 }
 
-void renderBlogMobile(uint32_t TITLE_FONT_ID){
+void renderBlogDesktop(uint32_t TITLE_FONT_ID)
+{
+    CLAY(
+        CLAY_ID("OuterContainer"),
+        CLAY_RECTANGLE({.color = almostBlack}),
+        CLAY_LAYOUT({.layoutDirection = CLAY_TOP_TO_BOTTOM,
+                     .sizing = layoutExpand,
+                     .padding = {16, 40}}))
+    {
+        CLAY(
+            CLAY_ID("HeaderBar"),
+            CLAY_RECTANGLE({.color = black,
+                            .cornerRadius = {8}}),
+            CLAY_LAYOUT({.sizing = {
+                             .height = CLAY_SIZING_FIXED(90),
+                             .width = CLAY_SIZING_GROW()}}))
+        {
+            CLAY_TEXT(
+                CLAY_STRING("Chloe\'s Blog"),
+                CLAY_TEXT_CONFIG({.fontId = TITLE_FONT_ID,
+                                  .fontSize = 46,
+                                  .textColor = orange}));
+        }
+        CLAY(
+            CLAY_ID("LowerContent"),
+            CLAY_LAYOUT({.sizing = layoutExpand,
+                         .childGap = 10}))
+        {
+            CLAY(
+                CLAY_ID("Nav Left"),
+                CLAY_LAYOUT({.layoutDirection = CLAY_TOP_TO_BOTTOM, .sizing = {.width = CLAY_SIZING_PERCENT(0.1), .height = CLAY_SIZING_GROW()}, .padding = {10, 10}, .childGap = 10}),
+                CLAY_RECTANGLE({
+                    .color = orange,
+                    .cornerRadius = {.topLeft = 16, .topRight = 0, .bottomLeft = 16, .bottomRight = 0},
+                }))
+            {
+                renderContentSelection();
+            }
+            CLAY(
+                CLAY_ID("Blog Content"),
+                CLAY_LAYOUT({.sizing = layoutExpand,
+                             .padding = {16, 16}}),
+                CLAY_RECTANGLE({
+                    .color = darkTeal,
+                    .cornerRadius = {.topLeft = 0, .topRight = 16, .bottomLeft = 0, .bottomRight = 16},
+                }))
+            {
+            }
+        }
+    }
+}
+
+void renderBlogMobile(uint32_t TITLE_FONT_ID)
+{
 }
 
 typedef struct
@@ -115,14 +141,22 @@ typedef struct
     bool mouseDown;
 } ScrollbarData;
 
-ScrollbarData scrollbarData = (ScrollbarData) {};
+ScrollbarData scrollbarData = (ScrollbarData){};
 
-Clay_RenderCommandArray CreateLayout(bool mobileScreen, bool splashButtonPressed, int font_id) {
+Clay_RenderCommandArray CreateLayout(bool mobileScreen, bool splashButtonPressed, int font_id)
+{
 
-    Clay_BeginLayout(); 
-    if (!mobileScreen){    renderBlogDesktop(font_id); }
-    else{ renderBlogMobile(font_id); }
-    if (splashButtonPressed){
+    Clay_BeginLayout();
+    if (!mobileScreen)
+    {
+        renderBlogDesktop(font_id);
+    }
+    else
+    {
+        renderBlogMobile(font_id);
+    }
+    if (splashButtonPressed)
+    {
         renderBlogMobile(0);
     }
 
@@ -132,69 +166,83 @@ Clay_RenderCommandArray CreateLayout(bool mobileScreen, bool splashButtonPressed
 bool splashButtonPressed = true;
 bool debugModeEnabled = true;
 
-
-CLAY_WASM_EXPORT("UpdateDrawFrame") Clay_RenderCommandArray UpdateDrawFrame(float width, float height, float mouseWheelX, float mouseWheelY, float mousePositionX, float mousePositionY, bool isTouchDown, bool isMouseDown, bool arrowKeyDownPressedThisFrame, bool arrowKeyUpPressedThisFrame, bool dKeyPressedThisFrame, float deltaTime, int font_id) {
+CLAY_WASM_EXPORT("UpdateDrawFrame")
+Clay_RenderCommandArray UpdateDrawFrame(float width, float height, float mouseWheelX, float mouseWheelY, float mousePositionX, float mousePositionY, bool isTouchDown, bool isMouseDown, bool arrowKeyDownPressedThisFrame, bool arrowKeyUpPressedThisFrame, bool dKeyPressedThisFrame, float deltaTime, int font_id)
+{
     windowWidth = width;
     windowHeight = height;
-    Clay_SetLayoutDimensions((Clay_Dimensions) { width, height });
+    Clay_SetLayoutDimensions((Clay_Dimensions){width, height});
 
-
-    if (dKeyPressedThisFrame) {
+    if (dKeyPressedThisFrame)
+    {
         debugModeEnabled = !debugModeEnabled;
         Clay_SetDebugModeEnabled(debugModeEnabled);
     }
 
-    Clay__debugViewHighlightColor = (Clay_Color) {105,210,231, 120};
+    Clay__debugViewHighlightColor = (Clay_Color){105, 210, 231, 120};
 
-    Clay_SetPointerState((Clay_Vector2) {mousePositionX, mousePositionY}, isMouseDown || isTouchDown);
+    Clay_SetPointerState((Clay_Vector2){mousePositionX, mousePositionY}, isMouseDown || isTouchDown);
 
-    if (!isMouseDown) {
+    if (!isMouseDown)
+    {
         scrollbarData.mouseDown = false;
     }
 
-    if (isMouseDown && !scrollbarData.mouseDown && Clay_PointerOver(Clay_GetElementId(CLAY_STRING("ScrollBar")))) {
+    if (isMouseDown && !scrollbarData.mouseDown && Clay_PointerOver(Clay_GetElementId(CLAY_STRING("ScrollBar"))))
+    {
         Clay_ScrollContainerData scrollContainerData = Clay_GetScrollContainerData(Clay_GetElementId(CLAY_STRING("OuterScrollContainer")));
-        scrollbarData.clickOrigin = (Clay_Vector2) { mousePositionX, mousePositionY };
+        scrollbarData.clickOrigin = (Clay_Vector2){mousePositionX, mousePositionY};
         scrollbarData.positionOrigin = *scrollContainerData.scrollPosition;
         scrollbarData.mouseDown = true;
-    } else if (scrollbarData.mouseDown) {
+    }
+    else if (scrollbarData.mouseDown)
+    {
         Clay_ScrollContainerData scrollContainerData = Clay_GetScrollContainerData(Clay_GetElementId(CLAY_STRING("OuterScrollContainer")));
-        if (scrollContainerData.contentDimensions.height > 0) {
-            Clay_Vector2 ratio = (Clay_Vector2) {
+        if (scrollContainerData.contentDimensions.height > 0)
+        {
+            Clay_Vector2 ratio = (Clay_Vector2){
                 scrollContainerData.contentDimensions.width / scrollContainerData.scrollContainerDimensions.width,
                 scrollContainerData.contentDimensions.height / scrollContainerData.scrollContainerDimensions.height,
             };
-            if (scrollContainerData.config.vertical) {
+            if (scrollContainerData.config.vertical)
+            {
                 scrollContainerData.scrollPosition->y = scrollbarData.positionOrigin.y + (scrollbarData.clickOrigin.y - mousePositionY) * ratio.y;
             }
-            if (scrollContainerData.config.horizontal) {
+            if (scrollContainerData.config.horizontal)
+            {
                 scrollContainerData.scrollPosition->x = scrollbarData.positionOrigin.x + (scrollbarData.clickOrigin.x - mousePositionX) * ratio.x;
             }
         }
     }
 
-    if (arrowKeyDownPressedThisFrame) {
+    if (arrowKeyDownPressedThisFrame)
+    {
         Clay_ScrollContainerData scrollContainerData = Clay_GetScrollContainerData(Clay_GetElementId(CLAY_STRING("OuterScrollContainer")));
-        if (scrollContainerData.contentDimensions.height > 0) {
+        if (scrollContainerData.contentDimensions.height > 0)
+        {
             scrollContainerData.scrollPosition->y = scrollContainerData.scrollPosition->y - 50;
         }
-    } else if (arrowKeyUpPressedThisFrame) {
+    }
+    else if (arrowKeyUpPressedThisFrame)
+    {
         Clay_ScrollContainerData scrollContainerData = Clay_GetScrollContainerData(Clay_GetElementId(CLAY_STRING("OuterScrollContainer")));
-        if (scrollContainerData.contentDimensions.height > 0) {
+        if (scrollContainerData.contentDimensions.height > 0)
+        {
             scrollContainerData.scrollPosition->y = scrollContainerData.scrollPosition->y + 50;
         }
     }
 
-    Clay_UpdateScrollContainers(isTouchDown, (Clay_Vector2) {mouseWheelX, mouseWheelY}, deltaTime);
+    Clay_UpdateScrollContainers(isTouchDown, (Clay_Vector2){mouseWheelX, mouseWheelY}, deltaTime);
     bool isMobileScreen = windowWidth < 750;
-    if (debugModeEnabled) {
+    if (debugModeEnabled)
+    {
         isMobileScreen = windowWidth < 950;
     }
     return CreateLayout(isMobileScreen, splashButtonPressed, font_id);
     //----------------------------------------------------------------------------------
 }
 
-
-int main(void){
+int main(void)
+{
     return 0;
 }
