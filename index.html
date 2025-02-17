@@ -572,6 +572,8 @@
     }
 
     let renderLoopCount = 0;
+    let renderSplashCount = 0;
+    var isSplash = true;
     function renderLoop(currentTime) {
         renderLoopCount = renderLoopCount + 1;
         const elapsed = currentTime - previousFrameTime;
@@ -585,7 +587,15 @@
             font_id = 0;
         }
 
-        instance.exports.UpdateDrawFrame(scratchSpaceAddress, window.innerWidth, window.innerHeight, 0, 0, window.mousePositionXThisFrame, window.mousePositionYThisFrame, window.touchDown, window.mouseDown, 0, 0, window.dKeyPressedThisFrame, elapsed / 1000, font_id);
+        if (renderSplashCount < 200){
+            renderSplashCount = renderSplashCount + 1;
+            if (renderSplashCount >= 200){
+                isSplash = false;
+            }
+        }
+
+
+        instance.exports.UpdateDrawFrame(scratchSpaceAddress, window.innerWidth, window.innerHeight, 0, 0, window.mousePositionXThisFrame, window.mousePositionYThisFrame, window.touchDown, window.mouseDown, 0, 0, window.dKeyPressedThisFrame, elapsed / 1000, font_id, isSplash);
         renderLoopHTML();
              
         requestAnimationFrame(renderLoop);

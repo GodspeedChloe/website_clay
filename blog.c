@@ -6,6 +6,7 @@
 #define CLAY_IMPLEMENTATION
 
 #include "./clay-0.12/clay.h"
+#include "blogcontent.h"
 
 double windowWidth = 1024, windowHeight = 768;
 float modelPageOneZRotation = 0;
@@ -34,13 +35,57 @@ uint32_t CURRCONTENTINDEX = 0;
 
 #define SECTIONCOUNT 3
 
-char CONTENTINDEXES[SECTIONCOUNT][20] = {"Main", "Word Of The Day", "Test"};
+char CONTENTINDEXES[SECTIONCOUNT][22] = {"Active\nTransmission", "Expanding the Lexicon", "Test"};
 
 #define RAYLIB_VECTOR2_TO_CLAY_VECTOR2(vector) \
     (Clay_Vector2) { .x = (vector).x, .y = (vector).y }
 
-void SplashScreen()
+void intToStr(int N, char *str)
 {
+    int i = 0;
+
+    // Save the copy of the number for sign
+    int sign = N;
+
+    // If the number is negative, make it positive
+    if (N < 0)
+        N = -N;
+
+    // Extract digits from the number and add them to the
+    // string
+    while (N > 0)
+    {
+
+        // Convert integer digit to character and store
+        // it in the str
+        str[i++] = N % 10 + '0';
+        N /= 10;
+    }
+
+    // If the number was negative, add a minus sign to the
+    // string
+    if (sign < 0)
+    {
+        str[i++] = '-';
+    }
+
+    // Null-terminate the string
+    str[i] = '\0';
+
+    // Reverse the string to get the correct order
+    for (int j = 0, k = i - 1; j < k; j++, k--)
+    {
+        char temp = str[j];
+        str[j] = str[k];
+        str[k] = temp;
+    }
+}
+
+Clay_String genFPSString(char fps[9])
+{
+    return (Clay_String){
+        .length = (int32_t)9,
+        .chars = fps};
 }
 
 void HandleContentSectionInteraction(Clay_ElementId elementId, Clay_PointerData pointerInfo, intptr_t userData)
@@ -51,6 +96,23 @@ void HandleContentSectionInteraction(Clay_ElementId elementId, Clay_PointerData 
     }
 }
 
+void renderSplashScreen()
+{
+    CLAY(
+        CLAY_ID("Splash"),
+        CLAY_LAYOUT({.layoutDirection = CLAY_TOP_TO_BOTTOM,
+                     .sizing = {CLAY_SIZING_GROW(), CLAY_SIZING_GROW()},
+                     .childAlignment = {.x = CLAY_ALIGN_X_CENTER, .y = CLAY_ALIGN_Y_CENTER}}),
+        CLAY_RECTANGLE({.color = pinkRed})) {
+            CLAY_TEXT(
+                CLAY_STRING("I HATE WEB SCRAPERS"),
+                CLAY_TEXT_CONFIG({.fontId = FONT_ID_ROBOTO,
+                .fontSize = 40,
+                .textColor = white})
+            );
+        }
+}
+
 void renderContentSelection()
 {
     int i = 0;
@@ -58,11 +120,9 @@ void renderContentSelection()
     {
         CLAY(
             CLAY_ID(CONTENTINDEXES[i]),
-            CLAY_LAYOUT({
-                .layoutDirection = CLAY_TOP_TO_BOTTOM,
-                .sizing = {CLAY_SIZING_GROW(), CLAY_SIZING_FIXED(70)},
-                .childAlignment = {.x = CLAY_ALIGN_X_CENTER, .y = CLAY_ALIGN_Y_CENTER }
-            }),
+            CLAY_LAYOUT({.layoutDirection = CLAY_TOP_TO_BOTTOM,
+                         .sizing = {CLAY_SIZING_GROW(), CLAY_SIZING_FIXED(70)},
+                         .childAlignment = {.x = CLAY_ALIGN_X_CENTER, .y = CLAY_ALIGN_Y_CENTER}}),
             CLAY_RECTANGLE({
                 .color = almostBlack,
                 .cornerRadius = {.topLeft = 16, .topRight = 0, .bottomLeft = 16, .bottomRight = 0},
@@ -72,14 +132,16 @@ void renderContentSelection()
                 CLAY_STRING(CONTENTINDEXES[i]),
                 CLAY_TEXT_CONFIG({.fontId = FONT_ID_ROBOTO,
                                   .fontSize = 12,
-                                  .textColor = white}));
+                                  .textColor = white,
+                                }));
         }
         i++;
     }
 }
 
-void renderBlogDesktop(uint32_t TITLE_FONT_ID)
+void renderBlogDesktop(uint32_t TITLE_FONT_ID, char fps[9])
 {
+
     CLAY(
         CLAY_ID("OuterContainer"),
         CLAY_RECTANGLE({.color = almostBlack}),
@@ -96,10 +158,10 @@ void renderBlogDesktop(uint32_t TITLE_FONT_ID)
                              .width = CLAY_SIZING_GROW()}}))
         {
             CLAY_TEXT(
-                CLAY_STRING("Chloe\'s Blog"),
+                CLAY_STRING("Chloe\'s Website"),
                 CLAY_TEXT_CONFIG({.fontId = TITLE_FONT_ID,
                                   .fontSize = 46,
-                                  .textColor = orange}));
+                                  .textColor = white}));
         }
         CLAY(
             CLAY_ID("LowerContent"),
@@ -110,7 +172,7 @@ void renderBlogDesktop(uint32_t TITLE_FONT_ID)
                 CLAY_ID("Nav Left"),
                 CLAY_LAYOUT({.layoutDirection = CLAY_TOP_TO_BOTTOM, .sizing = {.width = CLAY_SIZING_PERCENT(0.1), .height = CLAY_SIZING_GROW()}, .padding = {10, 10}, .childGap = 10}),
                 CLAY_RECTANGLE({
-                    .color = orange,
+                    .color = darkTeal,
                     .cornerRadius = {.topLeft = 16, .topRight = 0, .bottomLeft = 16, .bottomRight = 0},
                 }))
             {
@@ -121,16 +183,27 @@ void renderBlogDesktop(uint32_t TITLE_FONT_ID)
                 CLAY_LAYOUT({.sizing = layoutExpand,
                              .padding = {16, 16}}),
                 CLAY_RECTANGLE({
-                    .color = darkTeal,
-                    .cornerRadius = {.topLeft = 0, .topRight = 16, .bottomLeft = 0, .bottomRight = 16},
+                    .color = almostBlack,
+                    .cornerRadius = {.topLeft = 0, .topRight = 0, .bottomLeft = 0, .bottomRight = 0},
                 }))
             {
             }
         }
+        CLAY(
+            CLAY_ID("FPS counter"),
+            CLAY_LAYOUT({.layoutDirection = CLAY_TOP_TO_BOTTOM, .sizing = {.width = CLAY_SIZING_FIXED(90), .height = CLAY_SIZING_FIXED(20)}, .childAlignment = {.x = CLAY_ALIGN_X_CENTER, .y = CLAY_ALIGN_Y_CENTER}}),
+            CLAY_RECTANGLE({.color = brightYellow}))
+        {
+            CLAY_TEXT(
+                genFPSString(fps),
+                CLAY_TEXT_CONFIG({.fontId = FONT_ID_ROBOTO,
+                                  .fontSize = 12,
+                                  .textColor = almostBlack}));
+        }
     }
 }
 
-void renderBlogMobile(uint32_t TITLE_FONT_ID)
+void renderBlogMobile(uint32_t TITLE_FONT_ID, char fps[9])
 {
 }
 
@@ -143,23 +216,57 @@ typedef struct
 
 ScrollbarData scrollbarData = (ScrollbarData){};
 
-Clay_RenderCommandArray CreateLayout(bool mobileScreen, bool splashButtonPressed, int font_id)
+Clay_RenderCommandArray CreateLayout(bool mobileScreen, bool splashButtonPressed, int font_id, float deltaTime, bool isSplash)
 {
 
-    Clay_BeginLayout();
-    if (!mobileScreen)
+    uint32_t fps = (uint32_t)(1 / (deltaTime));
+
+    int i = 10;
+    int fps_length = 1;
+    while (fps / 10 != 0)
     {
-        renderBlogDesktop(font_id);
+        fps_length++;
+        i *= 10;
+    }
+
+    char fps_fill[fps_length];
+    intToStr(fps, fps_fill);
+
+    int fps_str_length = 5 + fps_length;
+    char fps_string[fps_str_length];
+    fps_string[0] = 'F';
+    fps_string[1] = 'P';
+    fps_string[2] = 'S';
+    fps_string[3] = ':';
+    fps_string[4] = ' ';
+
+    i = 0;
+    while (i <= fps_length)
+    {
+        fps_string[5 + i] = fps_fill[i];
+        i++;
+    }
+
+    Clay_BeginLayout();
+    if (isSplash)
+    {
+        renderSplashScreen();
     }
     else
     {
-        renderBlogMobile(font_id);
+        if (!mobileScreen)
+        {
+            renderBlogDesktop(font_id, fps_string);
+        }
+        else
+        {
+            renderBlogMobile(font_id, fps_string);
+        }
+        if (splashButtonPressed)
+        {
+            renderBlogMobile(0, fps_string);
+        }
     }
-    if (splashButtonPressed)
-    {
-        renderBlogMobile(0);
-    }
-
     return Clay_EndLayout();
 }
 
@@ -167,7 +274,7 @@ bool splashButtonPressed = true;
 bool debugModeEnabled = true;
 
 CLAY_WASM_EXPORT("UpdateDrawFrame")
-Clay_RenderCommandArray UpdateDrawFrame(float width, float height, float mouseWheelX, float mouseWheelY, float mousePositionX, float mousePositionY, bool isTouchDown, bool isMouseDown, bool arrowKeyDownPressedThisFrame, bool arrowKeyUpPressedThisFrame, bool dKeyPressedThisFrame, float deltaTime, int font_id)
+Clay_RenderCommandArray UpdateDrawFrame(float width, float height, float mouseWheelX, float mouseWheelY, float mousePositionX, float mousePositionY, bool isTouchDown, bool isMouseDown, bool arrowKeyDownPressedThisFrame, bool arrowKeyUpPressedThisFrame, bool dKeyPressedThisFrame, float deltaTime, int font_id, bool isSplash)
 {
     windowWidth = width;
     windowHeight = height;
@@ -238,7 +345,7 @@ Clay_RenderCommandArray UpdateDrawFrame(float width, float height, float mouseWh
     {
         isMobileScreen = windowWidth < 950;
     }
-    return CreateLayout(isMobileScreen, splashButtonPressed, font_id);
+    return CreateLayout(isMobileScreen, splashButtonPressed, font_id, deltaTime, isSplash);
     //----------------------------------------------------------------------------------
 }
 
