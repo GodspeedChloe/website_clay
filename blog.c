@@ -17,9 +17,7 @@ const uint32_t FONT_ID_BAYONE = 1;
 const uint32_t FONT_ID_DEMODE = 2;
 const uint32_t FONT_ID_ROBOTO = 3;
 const uint32_t FONT_ID_ETB_ROMAN = 4; // ET Book Roman Font (lining figures)
-const uint32_t FONT_ID_ETB_SEMI = 5; // ET Book Semi-bold (oldstyle figures)
-const uint32_t FONT_ID_ETB_BOLD = 6; // .. .. Bold (lining figures)
-const uint32_t FONT_ID_ETB_ITALIC = 7; // .. .. Italic (oldstyle figures)
+
 
 Clay_Color almostBlack = {12, 15, 10, 255};
 Clay_Color brightYellow = {251, 255, 18, 255};
