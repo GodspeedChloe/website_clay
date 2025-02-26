@@ -8,6 +8,10 @@
     <link rel="preload" href="/home/udon/Projects/website_clay/build/site/fonts/Bayone.ttf" as="font" type="font/ttf" crossorigin>
     <link rel="preload" href="/home/udon/Projects/website_clay/build/site/fonts/Demode.ttf" as="font" type="font/ttf" crossorigin>
     <link rel="preload" href="/home/udon/Projects/website_clay/build/site/fonts/roboto-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/home/udon/Projects/website_clay/build/site/fonts/et-book-roman-line-figures.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/home/udon/Projects/website_clay/build/site/fonts/et-book-semi-bold-old-style-figures.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/home/udon/Projects/website_clay/build/site/fonts/et-book-bold-line-figures.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/home/udon/Projects/website_clay/build/site/fonts/et-book-display-italic-old-style-figures.woff2" as="font" type="font/woff2" crossorigin>
     <title>x3+ax+b mod p</title>
     <style>
         html, body {
@@ -45,6 +49,21 @@
           font-family: 'Roboto';
           font-style: normal;
           src: local('Roboto');
+        }
+        @font-face {
+          font-family: 'ETBembo';
+          font-style: normal;
+          src: local('ETBembo RomanLF');
+        }
+        @font-face {
+          font-family: 'ETBembo';
+          font-style: normal;
+          src: local('ETBembo SemiBoldOSF');
+        }
+        @font-face {
+          font-family: 'ETBembo';
+          font-style: normal;
+          src: local('ETBembo BoldLF');
         }
 
         body > canvas {
@@ -99,6 +118,9 @@
         'Bayone',
         'Demode',
         'Roboto',
+        'ETBembo RomanLF',
+        'ETBembo SemiBoldOSF',
+        'ETBembo BoldLF',
     ];
     let elementCache = {};
     let imageCache = {};

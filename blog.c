@@ -11,11 +11,15 @@
 double windowWidth = 1024, windowHeight = 768;
 float modelPageOneZRotation = 0;
 
-int font_count = 4;
+int font_count = 7;
 const uint32_t FONT_ID_CUBE = 0;
 const uint32_t FONT_ID_BAYONE = 1;
 const uint32_t FONT_ID_DEMODE = 2;
 const uint32_t FONT_ID_ROBOTO = 3;
+const uint32_t FONT_ID_ETB_ROMAN = 4; // ET Book Roman Font (lining figures)
+const uint32_t FONT_ID_ETB_SEMI = 5; // ET Book Semi-bold (oldstyle figures)
+const uint32_t FONT_ID_ETB_BOLD = 6; // .. .. Bold (lining figures)
+const uint32_t FONT_ID_ETB_ITALIC = 7; // .. .. Italic (oldstyle figures)
 
 Clay_Color almostBlack = {12, 15, 10, 255};
 Clay_Color brightYellow = {251, 255, 18, 255};
@@ -192,13 +196,14 @@ void renderBlogDesktop(uint32_t TITLE_FONT_ID, char fps[9])
         CLAY(
             CLAY_ID("FPS counter"),
             CLAY_LAYOUT({.layoutDirection = CLAY_TOP_TO_BOTTOM, .sizing = {.width = CLAY_SIZING_FIXED(90), .height = CLAY_SIZING_FIXED(20)}, .childAlignment = {.x = CLAY_ALIGN_X_CENTER, .y = CLAY_ALIGN_Y_CENTER}}),
-            CLAY_RECTANGLE({.color = brightYellow}))
+            CLAY_RECTANGLE({.color = orange,
+                            .cornerRadius = {.topLeft = 5, .topRight = 5, .bottomLeft = 5, .bottomRight = 5},}))
         {
             CLAY_TEXT(
                 genFPSString(fps),
                 CLAY_TEXT_CONFIG({.fontId = FONT_ID_ROBOTO,
                                   .fontSize = 12,
-                                  .textColor = almostBlack}));
+                                  .textColor = darkTeal}));
         }
     }
 }
