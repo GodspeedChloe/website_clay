@@ -6,7 +6,7 @@
 #define CLAY_IMPLEMENTATION
 
 #include "./clay-0.12/clay.h"
-#include "blogcontent.h"
+#include "./blogcontent.h"
 
 double windowWidth = 1024, windowHeight = 768;
 float modelPageOneZRotation = 0;
@@ -37,10 +37,7 @@ uint32_t CURRCONTENTINDEX = 0;
 
 #define SECTIONCOUNT 3
 
-char CONTENTINDEXES[SECTIONCOUNT][22] = {"Active\nTransmission", "Expanding the Lexicon", "Test"};
-
-#define RAYLIB_VECTOR2_TO_CLAY_VECTOR2(vector) \
-    (Clay_Vector2) { .x = (vector).x, .y = (vector).y }
+char CONTENTINDEXES[SECTIONCOUNT][22] = {"Transmissions", "Lexiconing", "Secret Third Thing"};
 
 void intToStr(int N, char *str)
 {
@@ -182,13 +179,17 @@ void renderBlogDesktop(uint32_t TITLE_FONT_ID, char fps[9])
             }
             CLAY(
                 CLAY_ID("Blog Content"),
-                CLAY_LAYOUT({.sizing = layoutExpand,
-                             .padding = {16, 16}}),
+                CLAY_LAYOUT({.layoutDirection = CLAY_TOP_TO_BOTTOM,
+                             .sizing = layoutExpand,
+                             .padding = {16, 16},
+                             .childGap = 30}),
+                CLAY_SCROLL({.vertical=true}),
                 CLAY_RECTANGLE({
                     .color = almostBlack,
                     .cornerRadius = {.topLeft = 0, .topRight = 0, .bottomLeft = 0, .bottomRight = 0},
                 }))
             {
+                renderBlogPosts();
             }
         }
         CLAY(
@@ -323,6 +324,14 @@ Clay_RenderCommandArray UpdateDrawFrame(float width, float height, float mouseWh
                 scrollContainerData.scrollPosition->x = scrollbarData.positionOrigin.x + (scrollbarData.clickOrigin.x - mousePositionX) * ratio.x;
             }
         }
+    }
+
+    if (isMouseDown && !scrollbarData.mouseDown && Clay_PointerOver(Clay_GetElementId(CLAY_STRING("Blog Content"))))
+    {
+        Clay_ScrollContainerData scrollContainerData = Clay_GetScrollContainerData(Clay_GetElementId(CLAY_STRING("Blog Content")));
+        scrollbarData.clickOrigin = (Clay_Vector2){mousePositionX, mousePositionY};
+        scrollbarData.positionOrigin = *scrollContainerData.scrollPosition;
+        scrollbarData.mouseDown = true;
     }
 
     if (arrowKeyDownPressedThisFrame)
