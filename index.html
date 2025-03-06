@@ -586,7 +586,7 @@
         const elapsed = currentTime - previousFrameTime;
         previousFrameTime = currentTime;
         firstFrameTime = firstFrameTime + elapsed;
-        if (renderLoopCount > 40) {
+        if (renderLoopCount > 150) {
             font_id = font_id + 1;
             renderLoopCount = 0;
         }
@@ -594,13 +594,13 @@
             font_id = 0;
         }
 
-        if (renderSplashCount < 200){
+        var splash_frame = 300
+        if (renderSplashCount < splash_frame){
             renderSplashCount = renderSplashCount + 1;
-            if (renderSplashCount >= 200){
+            if (renderSplashCount >= splash_frame){
                 isSplash = false;
             }
         }
-
 
         instance.exports.UpdateDrawFrame(scratchSpaceAddress, window.innerWidth, window.innerHeight, 0, 0, window.mousePositionXThisFrame, window.mousePositionYThisFrame, window.touchDown, window.mouseDown, 0, 0, window.dKeyPressedThisFrame, elapsed / 1000, font_id, isSplash);
         renderLoopHTML();

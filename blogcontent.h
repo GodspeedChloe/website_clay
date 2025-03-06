@@ -4,6 +4,7 @@
 #include "./clay-0.12/clay.h"
 
 void renderBlogPosts();
+void renderLexiconPosts();
 
 #endif
 

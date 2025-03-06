@@ -8,9 +8,9 @@ CONTENT = """
 const uint32_t FONT_ID_ETB_ROMAN_ = 4;
 Clay_TextElementConfig dateTextConfig  = (Clay_TextElementConfig) { .fontId = FONT_ID_ETB_ROMAN_, .fontSize = 18, .textColor = {255, 255, 255, 255}};
 Clay_TextElementConfig titleTextConfig = (Clay_TextElementConfig) { .fontId = FONT_ID_ETB_ROMAN_, .fontSize = 30, .textColor = {255, 255, 255, 255}};
-Clay_TextElementConfig bodyTextConfig  = (Clay_TextElementConfig) { .fontId = FONT_ID_ETB_ROMAN_, .fontSize = 13, .textColor = {255, 255, 255, 255}};
-Clay_TextElementConfig wordTextConfig = (Clay_TextElementConfig) { .fontId = FONT_ID_ETB_ROMAN_, .fontSize = 20, .textColor = {24, 90, 86, 255}};
-Clay_TextElementConfig defTextConfig  = (Clay_TextElementConfig) { .fontId = FONT_ID_ETB_ROMAN_, .fontSize = 15, .textColor = {255, 138, 0, 255}};
+Clay_TextElementConfig bodyTextConfig  = (Clay_TextElementConfig) { .fontId = FONT_ID_ETB_ROMAN_, .fontSize = 20, .textColor = {255, 255, 255, 255}};
+Clay_TextElementConfig wordTextConfig = (Clay_TextElementConfig) { .fontId = FONT_ID_ETB_ROMAN_, .fontSize = 23, .textColor = {255, 255, 255, 255}};
+Clay_TextElementConfig defTextConfig  = (Clay_TextElementConfig) { .fontId = FONT_ID_ETB_ROMAN_, .fontSize = 20, .textColor = {255, 138, 0, 255}};
 
 
 void renderBlogPosts(){
@@ -42,7 +42,7 @@ def parse_file(file):
     lines = []
     content =   "CLAY(CLAY_ID(\"POST: "+file+"\"),\n" \
                 "    CLAY_LAYOUT({.layoutDirection = CLAY_TOP_TO_BOTTOM,\n" \
-                "                .sizing = {CLAY_SIZING_GROW(), CLAY_SIZING_GROW()}})\n" \
+                "                 .childGap=20})\n" \
                 "   ){\n{TEXT}  }\n"
     with open(file, "r+") as f:
         tree = ET.parse(f)
@@ -67,6 +67,9 @@ def parse_file(file):
 def sort_files(fs, r):
     return sorted(fs, key=lambda x: x[x.rindex("/"):], reverse=r)
 
+def post_break():
+    return "CLAY(CLAY_LAYOUT({.sizing = {CLAY_SIZING_FIXED(20), CLAY_SIZING_FIXED(20)}}),CLAY_RECTANGLE({.color={24, 90, 86, 255},.cornerRadius={3,3,3,3}})){}\n"
+
 def build_active_transmissions(c):
     ACTIVETRANSMISSIONS = ""
     files = []
@@ -76,7 +79,8 @@ def build_active_transmissions(c):
     files = sort_files(files, True)
     for f in files:
         print("Parsing file: "+f)
-        content = parse_file(f)
+        content = post_break()
+        content += parse_file(f)
         ACTIVETRANSMISSIONS += content
     return c.replace("{ACTIVETRANSMISSIONS}", ACTIVETRANSMISSIONS)
 

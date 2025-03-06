@@ -37,7 +37,7 @@ uint32_t CURRCONTENTINDEX = 0;
 
 #define SECTIONCOUNT 3
 
-char CONTENTINDEXES[SECTIONCOUNT][22] = {"Transmissions", "Lexiconing", "Secret Third Thing"};
+char CONTENTINDEXES[SECTIONCOUNT][22] = {"Transmissions", "Lexiconing", "Third Option"};
 
 void intToStr(int N, char *str)
 {
@@ -101,10 +101,17 @@ void renderSplashScreen()
         CLAY_ID("Splash"),
         CLAY_LAYOUT({.layoutDirection = CLAY_TOP_TO_BOTTOM,
                      .sizing = {CLAY_SIZING_GROW(), CLAY_SIZING_GROW()},
-                     .childAlignment = {.x = CLAY_ALIGN_X_CENTER, .y = CLAY_ALIGN_Y_CENTER}}),
-        CLAY_RECTANGLE({.color = pinkRed})) {
+                     .childAlignment = {.x = CLAY_ALIGN_X_CENTER, .y = CLAY_ALIGN_Y_CENTER},
+                     .childGap = 30}),
+        CLAY_RECTANGLE({.color = darkTeal})) {
             CLAY_TEXT(
                 CLAY_STRING("I HATE WEB SCRAPERS"),
+                CLAY_TEXT_CONFIG({.fontId = FONT_ID_ROBOTO,
+                .fontSize = 40,
+                .textColor = white})
+            );
+            CLAY_TEXT(
+                CLAY_STRING("Lookup \"Nepenthes\" to learn how to fight back"),
                 CLAY_TEXT_CONFIG({.fontId = FONT_ID_ROBOTO,
                 .fontSize = 40,
                 .textColor = white})
@@ -112,26 +119,35 @@ void renderSplashScreen()
         }
 }
 
-void renderContentSelection()
+void renderContentSelection(bool isMobile)
 {
+    Clay_CornerRadius radii = {.topLeft = 16, .topRight = 0, .bottomLeft = 16, .bottomRight = 0};
+    int tabheight = 70;
+    if (isMobile){
+        radii = (Clay_CornerRadius) {.topLeft = 16, .topRight = 16, .bottomLeft = 0, .bottomRight = 0};
+        tabheight = 50;
+    }
     int i = 0;
     while (i < SECTIONCOUNT)
     {
         CLAY(
             CLAY_ID(CONTENTINDEXES[i]),
             CLAY_LAYOUT({.layoutDirection = CLAY_TOP_TO_BOTTOM,
-                         .sizing = {CLAY_SIZING_GROW(), CLAY_SIZING_FIXED(70)},
+                         .sizing = {CLAY_SIZING_GROW(), CLAY_SIZING_FIXED(tabheight)},
                          .childAlignment = {.x = CLAY_ALIGN_X_CENTER, .y = CLAY_ALIGN_Y_CENTER}}),
             CLAY_RECTANGLE({
-                .color = almostBlack,
-                .cornerRadius = {.topLeft = 16, .topRight = 0, .bottomLeft = 16, .bottomRight = 0},
-            }))
+                .color = Clay_Hovered() ? orange : almostBlack,
+                .cornerRadius = radii,
+                .cursorPointer = true
+            }),
+            Clay_OnHover(HandleContentSectionInteraction, (size_t) i)
+        )            
         {
             CLAY_TEXT(
                 CLAY_STRING(CONTENTINDEXES[i]),
                 CLAY_TEXT_CONFIG({.fontId = FONT_ID_ROBOTO,
                                   .fontSize = 12,
-                                  .textColor = white,
+                                  .textColor = Clay_Hovered() ? darkTeal : white,
                                 }));
         }
         i++;
@@ -160,7 +176,7 @@ void renderBlogDesktop(uint32_t TITLE_FONT_ID, char fps[9])
                 CLAY_STRING("Chloe\'s Website"),
                 CLAY_TEXT_CONFIG({.fontId = TITLE_FONT_ID,
                                   .fontSize = 46,
-                                  .textColor = white}));
+                                  .textColor = Clay_Hovered() ? orange : darkTeal}));
         }
         CLAY(
             CLAY_ID("LowerContent"),
@@ -175,13 +191,13 @@ void renderBlogDesktop(uint32_t TITLE_FONT_ID, char fps[9])
                     .cornerRadius = {.topLeft = 16, .topRight = 0, .bottomLeft = 16, .bottomRight = 0},
                 }))
             {
-                renderContentSelection();
+                renderContentSelection(false);
             }
             CLAY(
                 CLAY_ID("Blog Content"),
                 CLAY_LAYOUT({.layoutDirection = CLAY_TOP_TO_BOTTOM,
                              .sizing = layoutExpand,
-                             .padding = {16, 16},
+                             .padding = {40, 40},
                              .childGap = 30}),
                 CLAY_SCROLL({.vertical=true}),
                 CLAY_RECTANGLE({
@@ -189,7 +205,12 @@ void renderBlogDesktop(uint32_t TITLE_FONT_ID, char fps[9])
                     .cornerRadius = {.topLeft = 0, .topRight = 0, .bottomLeft = 0, .bottomRight = 0},
                 }))
             {
-                renderBlogPosts();
+                if (CURRCONTENTINDEX == 0){
+                    renderBlogPosts();
+                }
+                else if (CURRCONTENTINDEX == 1){
+                    renderLexiconPosts();
+                }
             }
         }
         CLAY(
@@ -209,6 +230,80 @@ void renderBlogDesktop(uint32_t TITLE_FONT_ID, char fps[9])
 
 void renderBlogMobile(uint32_t TITLE_FONT_ID, char fps[9])
 {
+    int fontSizing = 46;
+    if (TITLE_FONT_ID == FONT_ID_CUBE){
+        fontSizing = 20;
+    }
+    CLAY(
+        CLAY_ID("OuterContainer"),
+        CLAY_RECTANGLE({.color = almostBlack}),
+        CLAY_LAYOUT({.layoutDirection = CLAY_TOP_TO_BOTTOM,
+                     .sizing = layoutExpand,
+                     .padding = {16, 40}}))
+    {
+        CLAY(
+            CLAY_ID("HeaderBar"),
+            CLAY_RECTANGLE({.color = black,
+                            .cornerRadius = {8}}),
+            CLAY_LAYOUT({.sizing = {
+                             .height = CLAY_SIZING_FIXED(90),
+                             .width = CLAY_SIZING_GROW()}}))
+        {
+            CLAY_TEXT(
+                CLAY_STRING("Chloe\'s Website"),
+                CLAY_TEXT_CONFIG({.fontId = TITLE_FONT_ID,
+                                  .fontSize = fontSizing,
+                                  .textColor = Clay_Hovered() ? darkTeal : orange}));
+        }
+        CLAY(
+            CLAY_ID("LowerContent"),
+            CLAY_LAYOUT({.layoutDirection = CLAY_TOP_TO_BOTTOM,
+                         .sizing = layoutExpand,
+                         .childGap = 10}))
+        {
+            CLAY(
+                CLAY_ID("Nav Top"),
+                CLAY_LAYOUT({.layoutDirection = CLAY_LEFT_TO_RIGHT, .sizing = {.width = CLAY_SIZING_GROW(), .height = CLAY_SIZING_PERCENT(0.1)}, .padding = {10, 10}, .childGap = 10}),
+                CLAY_RECTANGLE({
+                    .color = darkTeal,
+                    .cornerRadius = {.topLeft = 16, .topRight = 16, .bottomLeft = 0, .bottomRight = 0},
+                }))
+            {
+                renderContentSelection(true);
+            }
+            CLAY(
+                CLAY_ID("Blog Content"),
+                CLAY_LAYOUT({.layoutDirection = CLAY_TOP_TO_BOTTOM,
+                             .sizing = layoutExpand,
+                             .padding = {0, 16},
+                             .childGap = 30}),
+                CLAY_SCROLL({.vertical=true}),
+                CLAY_RECTANGLE({
+                    .color = almostBlack,
+                    .cornerRadius = {.topLeft = 0, .topRight = 0, .bottomLeft = 0, .bottomRight = 0},
+                }))
+            {
+                if (CURRCONTENTINDEX == 0){
+                    renderBlogPosts();
+                }
+                else if (CURRCONTENTINDEX == 1){
+                    renderLexiconPosts();
+                }
+            }
+        }
+        CLAY(
+            CLAY_ID("FPS counter"),
+            CLAY_LAYOUT({.layoutDirection = CLAY_TOP_TO_BOTTOM, .sizing = {.width = CLAY_SIZING_FIXED(90), .height = CLAY_SIZING_FIXED(20)}, .childAlignment = {.x = CLAY_ALIGN_X_CENTER, .y = CLAY_ALIGN_Y_CENTER}}),
+            CLAY_RECTANGLE({.color = orange,
+                            .cornerRadius = {.topLeft = 5, .topRight = 5, .bottomLeft = 5, .bottomRight = 5},}))
+        {
+            CLAY_TEXT(
+                genFPSString(fps),
+                CLAY_TEXT_CONFIG({.fontId = FONT_ID_ROBOTO,
+                                  .fontSize = 12,
+                                  .textColor = darkTeal}));
+        }
+    }
 }
 
 typedef struct
@@ -266,10 +361,6 @@ Clay_RenderCommandArray CreateLayout(bool mobileScreen, bool splashButtonPressed
         {
             renderBlogMobile(font_id, fps_string);
         }
-        if (splashButtonPressed)
-        {
-            renderBlogMobile(0, fps_string);
-        }
     }
     return Clay_EndLayout();
 }
@@ -277,6 +368,8 @@ Clay_RenderCommandArray CreateLayout(bool mobileScreen, bool splashButtonPressed
 bool splashButtonPressed = true;
 bool debugModeEnabled = true;
 
+
+//scratchSpaceAddress, window.innerWidth, window.innerHeight, 0, 0, window.mousePositionXThisFrame, window.mousePositionYThisFrame, window.touchDown, window.mouseDown, 0, 0, window.dKeyPressedThisFrame, elapsed / 1000, font_id, isSplash
 CLAY_WASM_EXPORT("UpdateDrawFrame")
 Clay_RenderCommandArray UpdateDrawFrame(float width, float height, float mouseWheelX, float mouseWheelY, float mousePositionX, float mousePositionY, bool isTouchDown, bool isMouseDown, bool arrowKeyDownPressedThisFrame, bool arrowKeyUpPressedThisFrame, bool dKeyPressedThisFrame, float deltaTime, int font_id, bool isSplash)
 {
