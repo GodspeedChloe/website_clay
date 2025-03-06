@@ -4,11 +4,11 @@
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="preload" href="/home/udon/Projects/website_clay/build/site/fonts/Cube.ttf" as="font" type="font/ttf" crossorigin>
-    <link rel="preload" href="/home/udon/Projects/website_clay/build/site/fonts/Bayone.ttf" as="font" type="font/ttf" crossorigin>
-    <link rel="preload" href="/home/udon/Projects/website_clay/build/site/fonts/Demode.ttf" as="font" type="font/ttf" crossorigin>
-    <link rel="preload" href="/home/udon/Projects/website_clay/build/site/fonts/roboto-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="preload" href="/home/udon/Projects/website_clay/build/site/fonts/et-book-roman-line-figures.woff" as="font" type="font/woff" crossorigin>
+    <link rel="preload" href="fonts/Cube.ttf" as="font" type="font/ttf" crossorigin>
+    <link rel="preload" href="fonts/Bayone.ttf" as="font" type="font/ttf" crossorigin>
+    <link rel="preload" href="fonts/Demode.ttf" as="font" type="font/ttf" crossorigin>
+    <link rel="preload" href="/fonts/roboto-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="fonts/et-book-roman-line-figures.woff" as="font" type="font/woff" crossorigin>
     <title>x3+ax+b mod p</title>
     <style>
         html, body {
@@ -25,31 +25,31 @@
           font-family: 'Cube';
           font-style: normal;
           font-weight: 400;
-          src: local('Cube') format('truetype');
+          src: url('fonts/Cube.ttf') format('truetype');
         }
 
         @font-face {
           font-family: 'Bayone';
           font-style: normal;
           font-weight: 400;
-          src: local('Bayone') format('truetype');
+          src: url('fonts/Bayone.ttf') format('truetype');
         }
 
         @font-face {
           font-family: 'Demode';
           font-style: normal;
           font-weight: 400;
-          src: local('Demode') format('truetype');
+          src: url('fonts/Demode.ttf') format('truetype');
         }
 
         @font-face {
           font-family: 'Roboto';
           font-style: normal;
-          src: local('Roboto');
+          src: url('fonts/roboto-latin-400-normal.woff2') format('woff2');
         }
         @font-face {
           font-family: 'ETBembo';
-          src: local('ETBembo RomanLF');
+          src: url('fonts/et-book-roman-line-figures.woff') format('woff');
           font-weight: bold;
         }
 
@@ -347,7 +347,7 @@
             },
         };
         const { instance } = await WebAssembly.instantiateStreaming(
-            fetch("/home/udon/Projects/website_clay/build/site/index.wasm"), importObject
+            fetch("index.wasm"), importObject
         );
         memoryDataView = new DataView(new Uint8Array(instance.exports.memory.buffer).buffer);
         scratchSpaceAddress = instance.exports.__heap_base.value;

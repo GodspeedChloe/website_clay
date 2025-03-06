@@ -227,7 +227,7 @@ Clay_RenderCommandArray CreateLayout(bool mobileScreen, bool splashButtonPressed
 
     int i = 10;
     int fps_length = 1;
-    while (fps / 10 != 0)
+    while (fps / i != 0)
     {
         fps_length++;
         i *= 10;
