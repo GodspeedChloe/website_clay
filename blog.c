@@ -197,7 +197,7 @@ void renderBlogDesktop(uint32_t TITLE_FONT_ID, char fps[9])
                 CLAY_ID("Blog Content"),
                 CLAY_LAYOUT({.layoutDirection = CLAY_TOP_TO_BOTTOM,
                              .sizing = layoutExpand,
-                             .padding = {40, 40},
+                             .padding = {40, 0},
                              .childGap = 30}),
                 CLAY_SCROLL({.vertical=true}),
                 CLAY_RECTANGLE({
