@@ -211,6 +211,9 @@ void renderBlogDesktop(uint32_t TITLE_FONT_ID, char fps[9])
                 else if (CURRCONTENTINDEX == 1){
                     renderLexiconPosts();
                 }
+                else if (CURRCONTENTINDEX == 2){
+                    renderMusicClubPosts();
+                }
             }
         }
         CLAY(
@@ -289,6 +292,9 @@ void renderBlogMobile(uint32_t TITLE_FONT_ID, char fps[9])
                 else if (CURRCONTENTINDEX == 1){
                     renderLexiconPosts();
                 }
+                else if (CURRCONTENTINDEX == 2){
+                    renderMusicClubPosts();
+                }
             }
         }
         CLAY(
@@ -331,8 +337,7 @@ Clay_RenderCommandArray CreateLayout(bool mobileScreen, bool splashButtonPressed
     char fps_fill[fps_length];
     intToStr(fps, fps_fill);
 
-    int fps_str_length = 5 + fps_length;
-    char fps_string[fps_str_length];
+    char fps_string[9];
     fps_string[0] = 'F';
     fps_string[1] = 'P';
     fps_string[2] = 'S';
@@ -345,6 +350,8 @@ Clay_RenderCommandArray CreateLayout(bool mobileScreen, bool splashButtonPressed
         fps_string[5 + i] = fps_fill[i];
         i++;
     }
+
+    fps_string[8] = '\0';
 
     Clay_BeginLayout();
     if (isSplash)

@@ -5,6 +5,7 @@
 
 void renderBlogPosts();
 void renderLexiconPosts();
+void renderMusicClubPosts();
 
 #endif
 
